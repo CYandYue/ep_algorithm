@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<launch>
+    <node pkg="sentry_control" type="teleop_key_control.py" name="sentry_control" output="screen" />
+</launch>

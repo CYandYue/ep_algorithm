@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<launch>
+    <!--建图方法选择-->
+    <arg name="slam_methods" default="gmapping" doc="slam type 
+        [gmapping, cartographer, hector, karto, frontier, explore, rrt_exploration, rtabmap]"/>
+    <node name="base2laser" pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 1 /base_link /laser 50"/> 
+    
+
+    <arg name="gmapping"        default="gmapping"/>
+    <arg name="cartographer"    default="cartographer"/>
+    <arg name="frontier"        default="frontier"/>
+    <arg name="explore"         default="explore"/>
+    <arg name="rrt_exploration" default="rrt_exploration"/>
+    <arg name="rtabmap"         default="rtabmap"/>
+
+    <!--机器命名空间(robot name space)-->
+    <!--如果建图方法是rrt的话,好像robot name有个编号? 存疑-->
+    <arg     if="$(eval slam_methods == 'rrt_exploration')" name="robot_prefix" default="jetauto_"/>
+    <arg     if="$(eval slam_methods == 'rrt_exploration')" name="robot_number" default="1"/>
+    <arg     if="$(eval slam_methods == 'rrt_exploration')" name="robot_name"   default="$(arg robot_prefix)$(arg robot_number)"/>
+    <!--如果建图方法 不是rrt的话,暂时不需要命名空间-->
+    <arg unless="$(eval slam_methods == 'rrt_exploration')" name="robot_name"   default="/"/>
+
+    <!--topic和frame设置(topic and frame setting)-->
+    <arg     if="$(eval robot_name == '/')" name="topic_prefix" default=""/>
+    <arg unless="$(eval robot_name == '/')" name="topic_prefix" default="/$(arg robot_name)"/>
+    <arg     if="$(eval robot_name == '/')" name="frame_prefix" default=""/>
+    <arg unless="$(eval robot_name == '/')" name="frame_prefix" default="$(arg robot_name)/"/>
+
+    <arg name="cmd_vel_topic"           default="$(arg topic_prefix)/sentry_controller/cmd_vel"/>
+    <arg name="scan_topic"              default="$(arg topic_prefix)/scan"/>
+    <arg name="map_topic"               default="$(arg topic_prefix)/map"/>
+    <arg name="odom_topic"              default="$(arg topic_prefix)/odom"/>
+    <arg name="clicked_point"           default="$(arg topic_prefix)/clicked_point"/>
+    <arg name="move_base_result"        default="$(arg topic_prefix)/move_base/result"/>
+    <arg name="costmap_topic"           default="$(arg topic_prefix)/move_base/global_costmap/costmap"/>
+    <arg name="costmap_updates_topic"   default="$(arg topic_prefix)/move_base/global_costmap/costmap_updates"/>
+
+    <arg name="map_frame"           default="$(arg frame_prefix)map"/>
+    <arg name="odom_frame"          default="$(arg frame_prefix)odom"/>
+    <arg name="base_frame"          default="$(arg frame_prefix)base_link"/>
+
+    <arg name="rtabmap_map_path"    default="~/.ros/rtabmap.db"/>
+
+    <group ns="$(arg robot_name)">
+        <!--建图方法选择-->
+        <group if="$(eval slam_methods == 'gmapping')">
+            <include file="$(find sentry_slam)/launch/include/$(arg slam_methods).launch">
+                <arg name="scan"        value="$(arg scan_topic)"/>
+                <arg name="base_frame"  value="$(arg base_frame)"/>
+                <arg name="odom_frame"  value="$(arg odom_frame)"/>
+                <arg name="map_frame"   value="$(arg map_frame)"/>
+            </include>
+        </group>
+        <group if="$(eval slam_methods == 'cartographer')">
+            <include file="$(find sentry_slam)/launch/include/$(arg slam_methods).launch">
+                <arg name="prefix"     value="$(arg robot_name)"/>
+            </include>
+        </group>
+        <group if="$(eval slam_methods == 'explore')">
+            <include file="$(find sentry_slam)/launch/include/gmapping.launch">
+                <arg name="scan"        value="$(arg scan_topic)"/>
+                <arg name="base_frame"  value="$(arg base_frame)"/>
+                <arg name="odom_frame"  value="$(arg odom_frame)"/>
+                <arg name="map_frame"   value="$(arg map_frame)"/>
+            </include>
+            <include file="$(find sentry_slam)/launch/include/$(arg slam_methods).launch">
+                <arg name="map_topic"               value="$(arg map_topic)"/>
+                <arg name="base_frame"              value="$(arg base_frame)"/>
+                <arg name="costmap_topic"           value="$(arg costmap_topic)"/>
+                <arg name="costmap_updates_topic"   value="$(arg costmap_updates_topic)"/>
+            </include>
+            <!-- 启动路径规划算法包 -->
+            <!-- <include file="$(find sentry_navigation)/launch/include/move_base.launch">
+                <arg name="cmd_vel_topic"                   value="$(arg cmd_vel_topic)"/>
+                <arg name="global_costmap_map_topic"        value="$(arg map_topic)"/>
+                <arg name="global_costmap_sensor_frame"     value="$(arg base_frame)"/>
+                <arg name="global_costmap_sensor_topic"     value="$(arg scan_topic)"/>
+                <arg name="global_costmap_global_frame"     value="$(arg map_frame)"/>
+                <arg name="global_costmap_robot_base_frame" value="$(arg base_frame)"/>
+                <arg name="local_costmap_map_topic"         value="$(arg map_topic)"/>
+                <arg name="local_costmap_sensor_frame"      value="$(arg base_frame)"/>
+                <arg name="local_costmap_sensor_topic"      value="$(arg scan_topic)"/>
+                <arg name="local_costmap_global_frame"      value="$(arg odom_frame)"/>
+                <arg name="local_costmap_robot_base_frame"  value="$(arg base_frame)"/>
+                <arg name="virtual_wall_map_frame"          value="$(arg map_frame)"/>
+                <arg name="teb_odom_topic"                  value="$(arg odom_topic)"/>
+                <arg name="teb_map_frame"                   value="$(arg odom_frame)"/>
+            </include> -->
+        </group>
+    </group>
+</launch>

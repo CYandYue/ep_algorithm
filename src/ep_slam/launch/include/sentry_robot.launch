@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<launch>
+    <!--开启 雷达过滤功能 与 键盘控制节点 -->
+
+    <!--机器命名空间(robot name space)-->
+    <arg name="robot_name"   default="/" /> <!--暂时不需要前缀-->
+
+
+    <!--topic和frame设置(topic and frame settings)-->
+    <arg      if="$(eval robot_name == '/')"    name="topic_prefix" default=""/>
+    <arg unless="$(eval robot_name == '/')"     name="topic_prefix" default="/$(arg robot_name)"/>
+    <arg      if="$(eval robot_name == '/')"    name="frame_prefix" default=""/>
+    <arg unless="$(eval robot_name == '/')"     name="frame_prefix" default="$(arg robot_name)/"/>
+    <arg      if="$(eval robot_name == '/')"    name="tf_prefix"    default=""/>
+    <arg unless="$(eval robot_name == '/')"     name="tf_prefix"    default="$(arg robot_name)"/>
+
+    <arg name="cmd_vel_topic"       default="$(arg topic_prefix)/sentry_controller/cmd_vel"/>
+    <arg name="scan_raw"            default="$(arg topic_prefix)/scan_raw"/>
+    <arg name="scan_topic"          default="$(arg topic_prefix)/scan"/>
+    <arg name="base_frame"          default="$(arg frame_prefix)base_footprint"/>
+
+
+    <group ns="$(arg robot_name)">
+        <!--静态tf发布(static tf publishment)-->
+        <!-- <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" >
+            <param name="tf_prefix" value="$(arg tf_prefix)" />
+        </node> -->
+
+        <!--雷达过滤(Lidar filter)-->
+        <node pkg="laser_filters" type="scan_to_scan_filter_chain" output="screen" name="laser_filter">
+                            <rosparam ns="scan_filter_chain" subst_value="true">
+                              - name: box_filter
+                                type: laser_filters/LaserScanBoxFilter
+                                params:
+                                        box_frame: $(arg base_frame)
+                                        min_x: -0.2
+                                        max_x: 0.12
+                                        min_y: -0.15
+                                        max_y: 0.15
+                                        min_z: -0.2
+                                        max_z: 0.2
+                            </rosparam>
+            <remap from="scan" to="$(arg scan_raw)" />
+            <remap from="scan_filtered" to="$(arg scan_topic)" />
+            </node>
+
+        <!--一个键盘控制的节点调用-->
+        <!-- <include file="$(find sentry_control)/launch/teleop_key_control.launch" /> -->
+
+    </group>
+</launch>

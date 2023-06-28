@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="robot_name"  default="/"/>
+
+    <!--建图方法选择-->
+    <arg name="slam_methods" default="gmapping" doc="slam type
+    [gmapping, cartographer, hector, karto, frontier, explore, rrt_exploration, rtabmap]"/>
+
+    <arg name="gmapping"        default="gmapping"/>
+    <arg name="cartographer"    default="cartographer"/>
+    <arg name="hector"          default="hector"/>
+    <arg name="karto"           default="karto"/>
+    <arg name="frontier"        default="frontier"/>
+    <arg name="explore"         default="explore"/>
+    <arg name="rrt_exploration" default="rrt_exploration"/>
+    <arg name="rtabmap"         default="rtabmap"/>
+
+    <group if="$(eval robot_name != '/')">
+        <node  pkg="rviz" type="rviz" name="rviz" required="true" args="-d $(find sentry_slam)/rviz/$(arg slam_methods)_sim.rviz"/>
+    </group>
+
+    <group if="$(eval robot_name == '/')">
+        <node  pkg="rviz" type="rviz" name="rviz" required="true" args="-d $(find sentry_slam)/rviz/without_namespace/$(arg slam_methods)_sim.rviz"/>
+    </group>
+
+</launch>
