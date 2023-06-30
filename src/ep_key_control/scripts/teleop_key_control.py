@@ -56,7 +56,7 @@ def getKey():
 if __name__ == "__main__":
     # init robot
     ep_robot = robot.Robot()
-    ep_robot.initialize(conn_type="sta")
+    ep_robot.initialize(conn_type="rndis")
     ep_chassis = ep_robot.chassis
 
     if os.name != 'nt':
@@ -80,7 +80,6 @@ if __name__ == "__main__":
                 ep_chassis.move(x=0, y=-Y_VAL, z=0, xy_speed=0.7).wait_for_completed()
             elif key == 'd':
                 ep_chassis.move(x=0, y=Y_VAL, z=0, xy_speed=0.7).wait_for_completed()
-            elif key == '':
 
             else:
                 if (key == '\x03'):
