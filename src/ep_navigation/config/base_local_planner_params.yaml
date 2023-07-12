@@ -18,7 +18,7 @@ TrajectoryPlannerROS:
 
 # Differential-drive robot configuration
 # 是否是全向移动机器人
-  holonomic_robot: false
+  holonomic_robot: true
 
 # Forward Simulation Parameters，前进模拟参数
   sim_time: 0.8
