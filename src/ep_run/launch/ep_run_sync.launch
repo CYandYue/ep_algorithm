@@ -1,4 +1,4 @@
 <launch>
     <include file="$(find ep_slam)/launch/ep_slam.launch"/>
-    <include file="$(find ep_navigation)/launch/ep_navigation.launch"/>
+    <include file="$(find ep_navigation)/launch/ep_navigation_sync.launch"/>
 </launch>

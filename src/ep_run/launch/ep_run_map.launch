@@ -1,0 +1,4 @@
+<launch>
+    <include file="$(find ep_slam)/launch/location_amcl.launch"/>
+    <include file="$(find ep_navigation)/launch/ep_navigation_map.launch"/>
+</launch>
