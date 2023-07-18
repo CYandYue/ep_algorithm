@@ -16,11 +16,11 @@
     <arg name="rtabmap"         default="rtabmap"/>
 
     <group if="$(eval robot_name != '/')">
-        <node  pkg="rviz" type="rviz" name="rviz" required="true" args="-d $(find sentry_slam)/rviz/$(arg slam_methods)_sim.rviz"/>
+        <node  pkg="rviz" type="rviz" name="rviz" required="true" args="-d $(find ep_slam)/rviz/$(arg slam_methods)_sim.rviz"/>
     </group>
 
     <group if="$(eval robot_name == '/')">
-        <node  pkg="rviz" type="rviz" name="rviz" required="true" args="-d $(find sentry_slam)/rviz/without_namespace/$(arg slam_methods)_sim.rviz"/>
+        <node  pkg="rviz" type="rviz" name="rviz" required="true" args="-d $(find ep_slam)/rviz/without_namespace/$(arg slam_methods)_sim.rviz"/>
     </group>
 
 </launch>

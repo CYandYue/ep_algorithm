@@ -16,6 +16,8 @@
     <param name="use_odom" value="false"/>
     <param name="publy_pose" value = "true"/>
     <param name="publy_tf" value="true"/>
+    <param name="transform_tolerance" value="1.0" />
+
   </node>
 
   <!--前三个param必须设置修改，要不然tf_tree不完整-->

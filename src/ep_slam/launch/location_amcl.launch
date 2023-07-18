@@ -6,5 +6,5 @@
     <!-- 启动AMCL节点 -->
     <include file="$(find ep_slam)/launch/include/amcl.launch" />
     <!-- 运行rviz -->
-    <node pkg="rviz" type="rviz" name="rviz"/>
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find ep_run)/rviz/a.rviz"/>
 </launch>
